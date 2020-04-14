@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import http from '@/utils/http'
+import getToken from '@/utils/get_token'
 
 Vue.use(Vuex)
 
@@ -22,21 +24,48 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    checkAuth(context) {
-        // TODO: ローカルストレージからの取得処理を実装する
-        const loginToken = null
-        if (loginToken == null) {
+    async checkAuth() {
+        // ローカルストレージに保存しているログイントークンを取得
+        if (getToken() == '') {
           // ローカルストレージに token が無い場合
           return false
         }
 
-        // TODO: axios で非同期処理してログイン情報を取得する
-        const user = {
-          id: '0001',
-          name: 'shigematsu'
+        // 認証チェック
+        if (!await this.dispatch('requestAuth')) {
+          return false 
         }
-        context.commit('setUser', user)
+
+        // vuex ステートにユーザー情報をセット
+        this.dispatch('setUserInfoToState')
+
         return true
+    },
+    async requestAuth() {
+      return http.get(`${process.env.VUE_APP_API_URL}/auth`)
+      .then(res => {
+        if (res.status == 200) {
+          return true
+        }
+      })
+      .catch(error => {
+        if (error.response.status == 401) {
+          return false
+        }
+        else {
+          return false
+        }
+      })
+    },
+    saveToken(context, token) {
+      localStorage.setItem('LoginToken', token)
+    },
+    saveUserInfo(context, user) {
+      localStorage.setItem('UserInfo', JSON.stringify(user))
+    },
+    setUserInfoToState(context) {
+      const user = JSON.parse(localStorage.getItem('UserInfo'))
+      context.commit('setUser', user)
     }
   },
   modules: {

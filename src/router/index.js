@@ -43,6 +43,9 @@ router.beforeEach((to, _, next) => {
         next('/login')
       }
     })
+    .catch(() => {
+      next('/login')
+    })
   }
   else {
     next()
