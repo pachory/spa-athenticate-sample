@@ -42,7 +42,7 @@ export default new Vuex.Store({
         return true
     },
     async requestAuth() {
-      return http.get(`${process.env.VUE_APP_API_URL}/auth`)
+      return http().get(`${process.env.VUE_APP_API_URL}/auth`)
       .then(res => {
         if (res.status == 200) {
           return true

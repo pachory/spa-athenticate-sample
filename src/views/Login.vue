@@ -11,7 +11,7 @@
 
 <script>
 import {mapActions} from 'vuex'
-import axios from 'axios'
+import http from '@/utils/http'
 
 export default {
   data() {
@@ -23,7 +23,11 @@ export default {
   methods: {
     ...mapActions(['saveToken', 'saveUserInfo']),
     submit() {
-      axios.post(`${process.env.VUE_APP_API_URL}/login`)
+      http({isNotAuthenticate: true})
+      .post(`${process.env.VUE_APP_API_URL}/login`, {
+        userId: this.userId,
+        password: this.password
+      })
       .then(response => {
         const json = response.data
 
