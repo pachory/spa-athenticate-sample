@@ -1,4 +1,4 @@
-# spa-login-sample
+# spa-authenticate-sample
 
 ## Project setup
 ```
